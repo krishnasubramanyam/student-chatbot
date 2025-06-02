@@ -1,39 +1,32 @@
-from flask import Flask, render_template, request, jsonify
-from dotenv import load_dotenv
-import openai
+from flask import Flask, request, render_template
+from openai import OpenAI
 import os
+from dotenv import load_dotenv
 
-load_dotenv()  # Loads .env
-# Make sure your API key is securely stored (preferably in environment variables)
-
-
-# Remove any preloaded keys (optional but useful in debugging)
-os.environ.pop("OPENAI_API_KEY", None)
-
+load_dotenv()
 
 app = Flask(__name__)
 
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    user_message = request.json.get("message")
+    question = request.form.get("question")
+    if not question:
+        return render_template("index.html", error="Please enter a question.")
 
-    client = openai.OpenAI(api_key=openai.api_key)  # new client-style usage
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",  # or "gpt-3.5-turbo"
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that answers student academic queries."},
-            {"role": "user", "content": user_message}
-        ],
-        temperature=0.7,
-        max_tokens=500
-    )
-
-    reply = response.choices[0].message.content
-    return jsonify({"reply": reply})
+    try:
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # ✅ correct new style
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": question}]
+        )
+        answer = response.choices[0].message.content.strip()
+        return render_template("index.html", question=question, answer=answer)
+    except Exception as e:
+        return render_template("index.html", error=str(e))
 
 if __name__ == "__main__":
     app.run(debug=True)
