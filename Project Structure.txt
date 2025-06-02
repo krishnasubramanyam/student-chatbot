@@ -1,0 +1,8 @@
+Project Structure
+pgsql
+Copy
+Edit
+student_chatbot/
+├── app.py
+└── templates/
+    └── index.html

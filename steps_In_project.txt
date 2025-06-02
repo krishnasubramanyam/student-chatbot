@@ -1,0 +1,121 @@
+ step 1. Create Project Files
+app.py
+
+from flask import Flask, render_template, request
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    answer = ""
+    if request.method == "POST":
+        question = request.form["question"]
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant for college students."},
+                    {"role": "user", "content": question}
+                ]
+            )
+            answer = response.choices[0].message["content"]
+        except Exception as e:
+            answer = f"Error: {e}"
+    return render_template("index.html", answer=answer)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+templates/index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Chatbot</title>
+</head>
+<body>
+    <h1>Ask Your Question</h1>
+    <form method="post">
+        <input type="text" name="question" required>
+        <button type="submit">Ask</button>
+    </form>
+    {% if answer %}
+        <h3>Answer:</h3>
+        <p>{{ answer }}</p>
+    {% endif %}
+</body>
+</html>
+
+requirements.txt
+
+flask
+openai
+python-dotenv
+
+
+.env
+
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+🔐 Add this in your local folder only. On Render, you'll set this key in the dashboard instead (see below).
+
+render.yaml (for automated deployment)
+
+services:
+  - type: web
+    name: student-chatbot
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+
+
+step:2 
+Push Code to GitHub
+  Initialize git repo in your folder:
+
+
+    git init
+    git add .
+    git commit -m "Initial commit"
+
+step-3
+3. Create a GitHub Repository
+Option A: From GitHub Website
+Go to https://github.com/new
+
+Name: student-chatbot
+Keep it public or private
+Do not initialize with README (we already have files)
+
+Click Create repository
+
+
+Option B: From VS Code (Optional)
+If you have the GitHub extension and are signed in, you can use the “Publish to GitHub” button in the Source Control tab.
+
+step:4
+ 4. Add Remote and Push
+Back in the terminal, link your GitHub repo:
+
+git remote add origin https://github.com/your-username/student-chatbot.git (mycase https://github.com/krishnasubramanyam/student-chatbot.git)
+git branch -M main
+git push -u origin main
+📌 Replace your-username with your actual GitHub username.
+
+Last final step
+
+ Done! Now Deploy to Render
+Head to https://render.com, click New Web Service, and follow the deployment steps using your GitHub repo.
+Would you like me to:
+
+Generate a .zip file of the full project?
+
+Help you add chatbot features (like dropdowns or database)?
+
+Style the chatbot with Bootstrap?
