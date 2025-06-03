@@ -4,19 +4,47 @@
     <meta charset="UTF-8">
     <title>Lavith Chatbot</title>
     <style>
-        body { font-family: Arial; padding: 20px; }
-        #chatbox { width: 100%; height: 400px; border: 1px solid #ccc; overflow-y: scroll; padding: 10px; }
-        #inputBox { width: 80%; padding: 10px; }
-        #sendBtn { padding: 10px 20px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            text-align: center;
+        }
+
+        #logo {
+            max-height: 100px;
+            margin-bottom: 10px;
+        }
+
+        #chatbox { 
+            width: 100%; 
+            height: 400px; 
+            border: 1px solid #ccc; 
+            overflow-y: scroll; 
+            padding: 10px; 
+            text-align: left;
+        }
+
+        #inputBox { 
+            width: 80%; 
+            padding: 10px; 
+        }
+
+        #sendBtn { 
+            padding: 10px 20px; 
+        }
     </style>
-     <img src="me.jpg" alt="My GPT Chatbot Logo">
 </head>
 <body>
+    <!-- Logo -->
+    <img id="logo" src="me.jpg" alt="Lavith Chatbot Logo">
     <h2>Student Chatbot</h2>
+
+    <!-- Chat UI -->
     <div id="chatbox"></div>
     <input type="text" id="inputBox" placeholder="Ask a question..." />
     <button id="sendBtn">Send</button>
 
+    <!-- Chat Script -->
     <script>
         const inputBox = document.getElementById("inputBox");
         const sendBtn = document.getElementById("sendBtn");
